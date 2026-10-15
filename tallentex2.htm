@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TALLENTEX 2027 Prep Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* Layout concept: a printed exam paper. Graph-paper hero with drifting OMR bubbles, one tear-off countdown ticket,
+   then ruled "parts" for pattern, simulator, syllabus, study plan, timeline and FAQ. */
+:root{
+  --paper:#EDF0F7;
+  --surface:#FFFFFF;
+  --surface-2:#E3E8F4;
+  --ink:#0D1642;
+  --ink-soft:#49527F;
+  --line:#CBD2E7;
+  --line-strong:#98A4CD;
+  --accent:#D6361F;
+  --accent-ink:#B3291A;
+  --on-accent:#FFFFFF;
+  --blue:#2A44D4;
+  --good:#0F7A55;
+  --warn:#9A5B00;
+  --bad:#B3261E;
+  --c-physics:#2A44D4;
+  --c-chemistry:#0B8785;
+  --c-biology:#3B8F2F;
+  --c-maths:#C77800;
+  --c-iq:#8636C2;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --shadow:0 1px 0 rgba(13,22,66,.05),0 18px 40px -22px rgba(13,22,66,.35);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#080D29; --surface:#111945; --surface-2:#19225A; --ink:#E9EDFF; --ink-soft:#A3AEDD;
+    --line:#27326F; --line-strong:#4A58A6; --accent:#FF6B55; --accent-ink:#FF8F7D; --on-accent:#1A0805;
+    --blue:#8EA0FF; --good:#4ED6A0; --warn:#F2B35A; --bad:#FF8A80;
+    --c-physics:#8EA0FF; --c-chemistry:#3FD0CB; --c-biology:#7ED06E; --c-maths:#F2B35A; --c-iq:#C79BF5;
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 18px 40px -22px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#080D29; --surface:#111945; --surface-2:#19225A; --ink:#E9EDFF; --ink-soft:#A3AEDD;
+  --line:#27326F; --line-strong:#4A58A6; --accent:#FF6B55; --accent-ink:#FF8F7D; --on-accent:#1A0805;
+  --blue:#8EA0FF; --good:#4ED6A0; --warn:#F2B35A; --bad:#FF8A80;
+  --c-physics:#8EA0FF; --c-chemistry:#3FD0CB; --c-biology:#7ED06E; --c-maths:#F2B35A; --c-iq:#C79BF5;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 18px 40px -22px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.02em;line-height:1.08}
+p{margin:0}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono-label{font:500 11.5px/1.3 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.small{font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.fine{font-size:12.5px;line-height:1.5;color:var(--ink-soft)}
+.mono-sm{font:400 11.5px/1 var(--f-mono);letter-spacing:.06em;color:var(--ink-soft)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Scroll progress */
+.progress{position:fixed;left:0;right:0;top:0;height:3px;z-index:70;pointer-events:none}
+.progress i{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+
+/* Header */
+.site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:color-mix(in srgb,var(--paper) 86%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:800 22px/1 var(--f-display);letter-spacing:.02em}
+.brand .bub{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--accent);display:grid;place-items:center}
+.brand .bub::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.brand .yr{font:500 11px/1 var(--f-mono);letter-spacing:.12em;padding:5px 8px;border:1px solid var(--line-strong);border-radius:999px;color:var(--ink-soft)}
+.nav{display:flex;gap:2px}
+.nav a{position:relative;text-decoration:none;font-size:14px;font-weight:500;padding:10px 12px;color:var(--ink-soft);border-radius:8px;transition:color .2s}
+.nav a:hover{color:var(--ink)}
+.nav a.active{color:var(--ink)}
+.nav a.active::after{content:'';position:absolute;left:12px;right:12px;bottom:4px;height:2px;background:var(--accent);border-radius:2px}
+.bar-actions{display:flex;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;font-size:18px;line-height:1}
+.icon-btn:hover{border-color:var(--ink)}
+.menu-btn{display:none}
+@media (max-width:900px){
+  .menu-btn{display:grid}
+  .nav{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--paper);border-bottom:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px))}
+  .nav.open{display:flex}
+  .nav a{padding:12px 8px;font-size:16px}
+  .nav a.active::after{left:8px;right:auto;width:24px;bottom:6px}
+}
+
+/* Buttons and controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:999px;border:1.5px solid transparent;font-weight:600;font-size:15px;text-decoration:none;transition:transform .15s,background .2s,border-color .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-ghost{border-color:var(--line-strong);background:transparent;color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink)}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;background:var(--surface-2);border-radius:14px}
+.seg button{border:0;background:transparent;padding:9px 14px;border-radius:10px;font-size:14px;font-weight:600;color:var(--ink-soft);transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(13,22,66,.18)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--line-strong);font-size:14px;font-weight:500}
+.pill::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--pill,var(--good))}
+.pill.warn{--pill:var(--warn)}
+.chip{display:inline-block;font:500 11.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:6px;background:var(--ink);color:var(--paper)}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+input[type=search]{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--line-strong);background:var(--surface);font-size:15px}
+input[type=search]::placeholder{color:var(--ink-soft)}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;padding-top:clamp(36px,6vw,76px)}
+.hero-grid-bg{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:32px 32px;opacity:.55;
+  -webkit-mask-image:radial-gradient(ellipse 80% 75% at 70% 35%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 80% 75% at 70% 35%,#000 20%,transparent 75%)}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-inner{position:relative;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(28px,5vw,64px);align-items:center}
+.hero-copy{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+.hero h1{font-size:clamp(40px,7vw,86px);font-weight:800;line-height:.97;letter-spacing:-.03em}
+.mark{background:linear-gradient(transparent 64%,color-mix(in srgb,var(--accent) 42%,transparent) 64% 93%,transparent 93%);padding:0 .06em}
+.lead{font-size:clamp(16px,2vw,19px);color:var(--ink-soft);max-width:62ch}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.hero .wrap+.wrap{position:relative}
+.kpis{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:clamp(36px,6vw,72px);border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line-strong);background:color-mix(in srgb,var(--paper) 70%,transparent)}
+.kpi{padding:20px 20px 22px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi:first-child{border-left:0}
+.kpi .val{font:800 clamp(26px,3.4vw,38px)/1.05 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .val small{font:500 12px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-right:6px}
+.kpi:nth-child(1) .val{color:var(--good)}
+.kpi:nth-child(2) .val{color:var(--warn)}
+@media (max-width:860px){
+  .hero-inner{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi:nth-child(odd){border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--line)}
+}
+
+/* Ticket */
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);position:relative}
+.ticket-top{padding:22px 22px 20px;display:flex;flex-direction:column;gap:12px}
+.perf{position:relative;border-top:2px dashed var(--line-strong);margin-inline:18px}
+.perf::before,.perf::after{content:'';position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--paper)}
+.perf::before{left:-30px}
+.perf::after{right:-30px}
+.ticket-bottom{padding:22px;display:flex;flex-direction:column;gap:14px}
+.cd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cd div{border:1.5px solid var(--line-strong);border-radius:12px;text-align:center;padding:12px 2px 9px;background:var(--paper)}
+.cd b{display:block;font:500 clamp(26px,4.4vw,40px)/1.05 var(--f-mono);font-variant-numeric:tabular-nums}
+.cd span{display:block;margin-top:4px;font:500 10.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.cd-note{font:400 12.5px/1.5 var(--f-mono);color:var(--ink-soft)}
+
+/* Parts */
+.part{padding-block:clamp(52px,8vw,100px);border-top:1px solid var(--line);scroll-margin-top:60px}
+.part-head{display:flex;flex-direction:column;gap:14px;margin-bottom:clamp(24px,4vw,40px);max-width:72ch}
+.kicker{display:inline-flex;align-items:center;gap:10px;font:500 12px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink)}
+.kicker::before{content:'';width:12px;height:12px;border-radius:50%;border:2px solid currentColor}
+.part h2{font-size:clamp(30px,4.6vw,52px);font-weight:700}
+.toolbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:22px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,3vw,30px);min-width:0}
+.panel.inset{background:var(--surface-2);border-color:transparent;border-radius:18px}
+.panel-title{font-size:19px;font-weight:700;margin-bottom:14px}
+.note{margin-top:18px;padding:14px 16px;border-radius:12px;background:var(--surface-2);display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.pace{margin-top:14px;font:400 12.5px/1.5 var(--f-mono);color:var(--ink-soft)}
+
+/* Pattern */
+.pattern-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:22px;align-items:start}
+.chart-box{position:relative;height:320px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{font:500 11px/1.3 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:0 10px 10px;border-bottom:1.5px solid var(--ink);white-space:nowrap}
+td{padding:12px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+th.r,td.r{text-align:right}
+td .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:9px}
+td.sub{white-space:normal;font-weight:600}
+.wbar{display:inline-block;width:64px;height:6px;border-radius:3px;background:var(--surface-2);vertical-align:middle;margin-left:10px;overflow:hidden}
+.wbar i{display:block;height:100%;border-radius:3px}
+@media (max-width:900px){.pattern-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Simulator */
+.sim-top{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:22px;align-items:stretch}
+.field{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.field .row{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:15px}
+.field .row b{font:500 15px var(--f-mono);color:var(--accent-ink)}
+.tally{margin:6px 0 0;padding-top:16px;border-top:1px solid var(--line-strong);display:grid;gap:10px}
+.tally div{display:flex;justify-content:space-between;font-size:15px}
+.tally dt{color:var(--ink-soft)}
+.tally dd{margin:0;font:500 15px var(--f-mono);font-variant-numeric:tabular-nums}
+.results{display:flex;flex-direction:column;gap:20px}
+.score{display:flex;align-items:baseline;gap:10px}
+.score b{font:800 clamp(56px,9vw,92px)/.9 var(--f-display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.score span{font:500 18px var(--f-mono);color:var(--ink-soft)}
+.ladder-wrap{position:relative;padding-top:34px}
+.marker{position:absolute;top:0;left:50%;transform:translateX(-50%);transition:left .35s cubic-bezier(.2,.7,.2,1);z-index:2}
+.marker span{display:block;background:var(--ink);color:var(--paper);font:500 12px/1 var(--f-mono);padding:5px 8px;border-radius:6px;font-variant-numeric:tabular-nums}
+.marker::after{content:'';display:block;margin:0 auto;width:0;height:0;border:5px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.ladder{display:flex;gap:4px;height:14px}
+.ladder i{display:block;border-radius:4px;background:var(--line);transition:background .25s}
+.ladder i.on{background:var(--accent)}
+.ladder-labels{display:flex;gap:4px;margin-top:8px}
+.ladder-labels span{font:400 10.5px/1.2 var(--f-mono);color:var(--ink-soft);text-align:center;white-space:nowrap}
+.tiers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tier{background:var(--surface-2);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.tier strong{font:700 clamp(20px,2.4vw,26px)/1.15 var(--f-display);letter-spacing:-.01em}
+.trio{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.85fr) minmax(0,.9fr);gap:22px;margin-top:22px;align-items:start}
+.trio .chart-box{height:280px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chips button{padding:8px 13px;border-radius:999px;border:1px solid var(--line-strong);background:transparent;font-size:14px;font-weight:600}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.stat-list{display:grid;gap:10px}
+.stat-list div{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.stat-list div:last-child{border-bottom:0;padding-bottom:0}
+.stat-list dt{color:var(--ink-soft)}
+.stat-list dd{margin:0;font:500 14.5px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.verdict{margin-top:14px;font-size:14.5px;padding:12px 14px;border-radius:12px;background:var(--surface-2)}
+.trow{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.trow:last-child{border-bottom:0}
+.trow .bar-track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:6px}
+.trow .bar-track i{display:block;height:100%;background:var(--blue);border-radius:3px}
+.trow b{font-family:var(--f-mono);font-weight:500;text-align:right}
+.trow.out b{color:var(--bad)}
+@media (max-width:1000px){.trio{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.sim-top{grid-template-columns:minmax(0,1fr)}.tiers{grid-template-columns:minmax(0,1fr)}}
+
+/* Syllabus */
+.syl-tools{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,260px);gap:16px;align-items:center;margin-bottom:16px}
+.syl-prog{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.syl-prog .track{flex:1;height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.syl-prog .track i{display:block;height:100%;width:0;background:var(--good);border-radius:4px;transition:width .35s}
+.syl-prog span{font:500 13px var(--f-mono);white-space:nowrap}
+.grid-topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.topic{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s,box-shadow .2s;min-width:0}
+.topic:hover{border-color:var(--line-strong);transform:translateY(-2px);box-shadow:var(--shadow)}
+.topic.is-done{background:var(--surface-2);border-color:transparent}
+.topic.is-done h4{text-decoration:line-through;text-decoration-color:var(--line-strong)}
+.topic-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.subj{display:inline-flex;align-items:center;gap:8px;font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase}
+.subj i{width:10px;height:10px;border-radius:50%}
+.topic h4{font-size:18px;font-weight:700;line-height:1.2}
+.topic p{font-size:14px;line-height:1.55;color:var(--ink-soft)}
+.rev{margin-top:auto;display:inline-flex;align-items:center;gap:9px;font:500 12.5px var(--f-mono);cursor:pointer;padding-top:4px}
+.rev input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.empty{grid-column:1/-1;text-align:center;padding:40px 0;color:var(--ink-soft)}
+@media (max-width:860px){.syl-tools{grid-template-columns:minmax(0,1fr)}}
+
+/* Planner */
+.plan-grid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:22px;align-items:start}
+.plan-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px 0 20px}
+.plan-stats div{background:var(--surface);border-radius:12px;padding:12px 14px}
+.plan-stats dt{font:500 10.5px/1.2 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.plan-stats dd{margin:6px 0 0;font:700 24px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.day{display:grid;grid-template-columns:116px minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.day:first-child{border-top:0;padding-top:0}
+.day-date{display:flex;flex-direction:column;gap:6px;align-items:flex-start;font:500 13px/1.2 var(--f-mono)}
+.day-date b{font:700 17px/1 var(--f-display)}
+.tag{font:500 10.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:5px 7px;border-radius:5px;background:var(--accent);color:var(--on-accent)}
+.tag.alt{background:var(--ink);color:var(--paper)}
+.topics{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.topics li{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;border:1px solid var(--line-strong);font-size:13.5px;font-weight:500}
+.topics li i{width:9px;height:9px;border-radius:50%}
+.plan-empty{padding:20px 0;color:var(--ink-soft)}
+@media (max-width:900px){.plan-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:560px){.day{grid-template-columns:minmax(0,1fr);gap:10px}.day-date{flex-direction:row;align-items:center;gap:10px}}
+
+/* Timeline */
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0;max-width:820px}
+.tl{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:18px;padding-bottom:34px}
+.tl:last-child{padding-bottom:0}
+.tl::before{content:'';position:absolute;left:21px;top:44px;bottom:6px;border-left:2px dashed var(--line-strong)}
+.tl:last-child::before{display:none}
+.tl-mark{width:44px;height:44px;border-radius:50%;border:2.5px solid var(--accent);display:grid;place-items:center;font:500 16px var(--f-mono);background:var(--paper);color:var(--accent-ink)}
+.tl h3{font-size:22px;font-weight:700;margin-bottom:4px}
+.tl .when{font:500 12.5px/1.4 var(--f-mono);letter-spacing:.04em;color:var(--accent-ink);margin-bottom:8px}
+.tl p.body{font-size:15.5px;color:var(--ink-soft);max-width:64ch}
+.tl code{font:500 13.5px var(--f-mono);background:var(--surface-2);padding:2px 7px;border-radius:6px;color:var(--ink)}
+.status-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.stat{display:inline-flex;align-items:center;gap:8px;font:500 12.5px/1.3 var(--f-mono);padding:7px 11px;border-radius:8px;border:1px solid var(--line-strong)}
+.stat::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--st,var(--good))}
+.stat.warn{--st:var(--warn)}
+.stat.bad{--st:var(--bad)}
+.stat.mute{--st:var(--line-strong)}
+
+/* FAQ */
+.faq{max-width:820px;border-top:1.5px solid var(--ink)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:center;padding:20px 0;font:700 clamp(17px,2.2vw,21px)/1.25 var(--f-display);letter-spacing:-.01em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';font:400 26px/1 var(--f-mono);color:var(--accent-ink);flex:none;transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 0 22px;max-width:64ch;color:var(--ink-soft)}
+
+/* Footer */
+.site-footer{border-top:1px solid var(--line);padding-block:40px}
+.site-footer .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;align-items:flex-start}
+.site-footer p{font-size:13.5px;color:var(--ink-soft);max-width:68ch}
+.site-footer strong{color:var(--ink)}
+
+/* Entrance (resolves to visible, never waits on scroll) */
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="#overview" aria-label="TALLENTEX 2027 home"><span class="bub" aria-hidden="true"></span>TALLENTEX<span class="yr">2027</span></a>
+    <nav id="nav" class="nav" aria-label="Sections">
+      <a href="#overview">Overview</a>
+      <a href="#pattern">Exam pattern</a>
+      <a href="#simulator">Score simulator</a>
+      <a href="#syllabus">Syllabus</a>
+      <a href="#planner">Study plan</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="bar-actions">
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="Switch between light and dark theme">◐</button>
+      <button id="menuBtn" class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Overview -->
+  <section id="overview" class="hero">
+    <div class="hero-grid-bg" aria-hidden="true"></div>
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="chip rise">ALLEN Talent Encouragement Exam</p>
+        <h1 class="rise d1">Master <span class="mark">TALLENTEX 2027</span> with precision analytics</h1>
+        <p class="lead rise d2">TALLENTEX is ALLEN's flagship national scholarship exam for Class 5 to 10 students. Explore exam structures, calculate negative marking impacts, browse Class 8 &amp; 9 syllabi, and simulate your score for scholarships up to 90% and cash rewards exceeding ₹2.5 Crore.</p>
+        <div class="cta rise d3">
+          <a class="btn btn-primary" href="#simulator">Simulate my score</a>
+          <a class="btn btn-ghost" href="#planner">Build my study plan</a>
+        </div>
+      </div>
+
+      <aside class="ticket rise d2" aria-label="Exam countdown">
+        <div class="ticket-top">
+          <p class="mono-label">Exam countdown</p>
+          <div class="seg slot-seg" role="group" aria-label="Choose exam slot">
+            <button type="button" data-value="0" aria-pressed="true">25 Oct</button>
+            <button type="button" data-value="1" aria-pressed="false">28 Oct</button>
+            <button type="button" data-value="2" aria-pressed="false">31 Oct</button>
+          </div>
+          <p class="small" id="slotMeta">Offline pen-and-paper (400+ cities) and online CBT slot 1</p>
+        </div>
+        <div class="perf" aria-hidden="true"></div>
+        <div class="ticket-bottom">
+          <div class="cd" id="cd" role="timer" aria-label="Time left until the exam">
+            <div><b id="cdD">00</b><span>Days</span></div>
+            <div><b id="cdH">00</b><span>Hours</span></div>
+            <div><b id="cdM">00</b><span>Min</span></div>
+            <div><b id="cdS">00</b><span>Sec</span></div>
+          </div>
+          <p class="cd-note" id="cdNote">80 MCQs · 120 minutes · max 320 marks</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="wrap">
+      <div class="kpis rise d3">
+        <div class="kpi"><p class="mono-label">Max scholarship</p><p class="val"><small>Up to</small><span data-count="90">90</span>%</p><p class="small">On ALLEN classroom / online</p></div>
+        <div class="kpi"><p class="mono-label">Total cash rewards</p><p class="val">₹<span data-count="2.5" data-dec="1">2.5</span>+ Cr</p><p class="small">For national &amp; zonal toppers</p></div>
+        <div class="kpi"><p class="mono-label">Offline exam date</p><p class="val">25 Oct 2026</p><p class="small">Pen-and-paper (400+ cities)</p></div>
+        <div class="kpi"><p class="mono-label">Exam duration</p><p class="val">2 Hours</p><p class="small">80 MCQs • 120 minutes</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part 1: Pattern -->
+  <section id="pattern" class="part">
+    <div class="wrap">
+      <header class="part-head">
+        <p class="kicker">Part 1</p>
+        <h2>Exam pattern and subject distribution</h2>
+        <p class="lead">See how questions are split across Science, Mathematics and Mental Ability (IQ). Switch between class groups to watch the question counts and marking rules change.</p>
+      </header>
+      <div class="toolbar">
+        <div class="seg" id="groupSeg" role="group" aria-label="Class group">
+          <button type="button" data-value="junior" aria-pressed="false">Classes 5, 6 &amp; 7</button>
+          <button type="button" data-value="senior" aria-pressed="true">Classes 8, 9 &amp; 10</button>
+        </div>
+        <p class="pill" id="markingBadge"></p>
+      </div>
+      <div class="pattern-grid">
+        <div class="panel">
+          <h3 class="panel-title">Subject-wise question breakdown</h3>
+          <div class="chart-box"><canvas id="patternChart" role="img" aria-label="Doughnut chart of questions by subject"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">Question allocation</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Subject</th><th class="r">Questions</th><th class="r">Max marks</th><th class="r">Weight</th><th class="r">Time at pace</th></tr></thead>
+              <tbody id="patternBody"></tbody>
+            </table>
+          </div>
+          <div class="note"><p class="mono-label">Key exam insight</p><p id="patternInsight"></p></div>
+          <p class="pace">Pacing: 120 minutes across 80 questions is 1.5 minutes per question on average.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part 2: Simulator -->
+  <section id="simulator" class="part">
+    <div class="wrap">
+      <header class="part-head">
+        <p class="kicker">Part 2</p>
+        <h2>Score and negative marking simulator</h2>
+        <p class="lead">For Classes 8, 9 and 10, every incorrect answer costs <strong>1 mark</strong>. Move the sliders to see how accuracy changes your net score, estimated scholarship range and Competitive Success Index (CSI).</p>
+      </header>
+      <div class="toolbar">
+        <div class="seg" id="simSeg" role="group" aria-label="Marking rules">
+          <button type="button" data-value="junior" aria-pressed="false">Classes 5–7 · no negative</button>
+          <button type="button" data-value="senior" aria-pressed="true">Classes 8–10 · −1 for wrong</button>
+        </div>
+      </div>
+
+      <div class="sim-top">
+        <div class="panel inset">
+          <div class="field">
+            <label class="row" for="rangeAttempted"><span>Attempted questions</span><b id="lblAttempted">70 / 80</b></label>
+            <input id="rangeAttempted" type="range" min="10" max="80" step="1" value="70">
+          </div>
+          <div class="field">
+            <label class="row" for="rangeAccuracy"><span>Accuracy rate</span><b id="lblAccuracy">85%</b></label>
+            <input id="rangeAccuracy" type="range" min="30" max="100" step="5" value="85">
+          </div>
+          <dl class="tally">
+            <div><dt>Correct (+4)</dt><dd id="simCorrect" style="color:var(--good)">60</dd></div>
+            <div><dt id="lblWrong">Incorrect (−1)</dt><dd id="simIncorrect" style="color:var(--bad)">10</dd></div>
+            <div><dt>Unattempted (0)</dt><dd id="simUnattempted">10</dd></div>
+          </dl>
+        </div>
+
+        <div class="panel results">
+          <div>
+            <p class="mono-label">Net calculated score</p>
+            <p class="score" aria-live="polite"><b id="simNet">230</b><span>/ 320</span></p>
+          </div>
+          <div class="ladder-wrap">
+            <div class="marker" id="marker"><span id="markerLbl">230</span></div>
+            <div class="ladder" id="ladder"></div>
+            <div class="ladder-labels" id="ladderLabels"></div>
+          </div>
+          <div class="tiers">
+            <div class="tier"><p class="mono-label">Estimated scholarship range</p><strong id="estSch">75% – 80% Waiver</strong><p class="small">Applicable on ALLEN classroom courses</p></div>
+            <div class="tier"><p class="mono-label">Competitive Success Index (CSI)</p><strong id="estCSI">Top 5% National Pool</strong><p class="small">High potential for JEE / NEET &amp; Olympiads</p></div>
+          </div>
+          <p class="fine">Scholarship and CSI bands are planning estimates built from your score percentage. They are not official slabs, so confirm the current ones on allen.in/tallentex.</p>
+        </div>
+      </div>
+
+      <div class="trio">
+        <div class="panel">
+          <h3 class="panel-title">Net score: your plan vs random guessing</h3>
+          <div class="chart-box"><canvas id="simChart" role="img" aria-label="Bar chart comparing marks gained, lost and net score for your plan and for random guessing"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">Should I guess?</h3>
+          <p class="mono-label" style="margin-bottom:10px">Options you can eliminate</p>
+          <div class="chips" id="elimChips" role="group" aria-label="Options eliminated">
+            <button type="button" data-value="0" aria-pressed="true">0</button>
+            <button type="button" data-value="1" aria-pressed="false">1</button>
+            <button type="button" data-value="2" aria-pressed="false">2</button>
+            <button type="button" data-value="3" aria-pressed="false">3</button>
+          </div>
+          <dl class="stat-list">
+            <div><dt>Chance of being right</dt><dd id="gP">25%</dd></div>
+            <div><dt>Average marks per guess</dt><dd id="gEV">+0.25</dd></div>
+            <div><dt>Break-even accuracy</dt><dd id="gBE">20%</dd></div>
+          </dl>
+          <p class="verdict" id="gVerdict"></p>
+          <p class="fine" style="margin-top:10px">Assumes four options per question.</p>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">Work backwards from a target</h3>
+          <div class="field" style="margin-bottom:8px">
+            <label class="row" for="rangeTarget"><span>Target score</span><b id="lblTarget">240 / 320</b></label>
+            <input id="rangeTarget" type="range" min="40" max="320" step="4" value="240">
+          </div>
+          <div id="targetRows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part 3: Syllabus -->
+  <section id="syllabus" class="part">
+    <div class="wrap">
+      <header class="part-head">
+        <p class="kicker">Part 3</p>
+        <h2>Class-wise NCERT syllabus explorer</h2>
+        <p class="lead">TALLENTEX tests foundational NCERT concepts from your current class and earlier topics. Pick a class, filter by subject or search, and tick topics off as you revise them. Your ticks stay in this browser.</p>
+      </header>
+      <div class="syl-tools">
+        <div class="seg cls-seg" role="group" aria-label="Class">
+          <button type="button" data-value="8" aria-pressed="true">Class 8 syllabus</button>
+          <button type="button" data-value="9" aria-pressed="false">Class 9 syllabus</button>
+        </div>
+        <div class="chips" id="subjChips" role="group" aria-label="Filter by subject" style="margin:0"></div>
+        <div><label class="sr-only" for="topicSearch">Search topics</label><input id="topicSearch" type="search" placeholder="Search topics, e.g. friction"></div>
+      </div>
+      <div class="syl-prog"><span id="sylProgText">0 of 0 topics revised</span><div class="track"><i id="sylProgBar"></i></div></div>
+      <div id="syllabusGrid" class="grid-topics"></div>
+    </div>
+  </section>
+
+  <!-- Part 4: Planner -->
+  <section id="planner" class="part">
+    <div class="wrap">
+      <header class="part-head">
+        <p class="kicker">Part 4</p>
+        <h2>Your day-by-day study plan</h2>
+        <p class="lead">The plan counts the days left to your exam slot, spreads the topics you have not revised yet across those days, and keeps 30 minutes a day for Mental Ability practice. Revise a topic in Part 3 and the plan updates.</p>
+      </header>
+      <div class="plan-grid">
+        <div class="panel inset">
+          <div class="field"><p class="mono-label">Your class</p><div class="seg cls-seg" role="group" aria-label="Class for plan"><button type="button" data-value="8" aria-pressed="true">Class 8</button><button type="button" data-value="9" aria-pressed="false">Class 9</button></div></div>
+          <div class="field"><label class="row" for="rangeHours"><span>Study time per day</span><b id="lblHours">3 h</b></label><input id="rangeHours" type="range" min="1" max="8" step="0.5" value="3"></div>
+          <div class="field"><p class="mono-label">Exam slot</p><div class="seg slot-seg" role="group" aria-label="Exam slot for plan"><button type="button" data-value="0" aria-pressed="true">25 Oct</button><button type="button" data-value="1" aria-pressed="false">28 Oct</button><button type="button" data-value="2" aria-pressed="false">31 Oct</button></div></div>
+          <dl class="plan-stats" id="planStats"></dl>
+          <button class="btn btn-ghost" id="copyPlan" type="button">Copy plan as text</button>
+          <p class="fine" id="copyMsg" style="margin-top:10px" aria-live="polite"></p>
+        </div>
+        <div class="panel"><div id="planList"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Part 5: Timeline -->
+  <section id="timeline" class="part">
+    <div class="wrap">
+      <header class="part-head">
+        <p class="kicker">Part 5</p>
+        <h2>Key milestones and strategy timeline</h2>
+        <p class="lead">Follow this order from registration through test day and results. Deadline chips use today's date and the exam slot you chose above.</p>
+      </header>
+      <ol class="timeline">
+        <li class="tl">
+          <span class="tl-mark">1</span>
+          <div>
+            <h3>Registration &amp; mode selection</h3>
+            <p class="when">Deadline: 10 days before test date (Offline) / 4 days (Online CBT)</p>
+            <p class="body">Choose between Offline (pen-and-paper across 400+ cities) or Online CBT from home. Complete registration on <code>allen.in/tallentex</code>.</p>
+            <div class="status-row" id="regStatus"></div>
+          </div>
+        </li>
+        <li class="tl">
+          <span class="tl-mark">2</span>
+          <div>
+            <h3>Targeted concept revision &amp; IQ practice</h3>
+            <p class="when">30–45 days prior</p>
+            <p class="body">Master NCERT fundamentals in Physics, Chemistry, Biology and Mathematics. Allocate 30 minutes daily to Mental Ability topics like Number Series, Syllogisms and Coding-Decoding.</p>
+            <div class="status-row"><span class="stat mute" id="prepNote"></span></div>
+          </div>
+        </li>
+        <li class="tl">
+          <span class="tl-mark">3</span>
+          <div>
+            <h3>Official exam days</h3>
+            <p class="when">25 October 2026 (Offline &amp; Online Slot 1) | 28 &amp; 31 Oct (Online Slots 2 &amp; 3)</p>
+            <p class="body">Appear for the 2-hour test (120 minutes). Keep to about 1.5 minutes per question on average, and in the Class 8–10 test avoid blind guesses when you cannot rule out an option, because each wrong answer costs 1 mark.</p>
+          </div>
+        </li>
+        <li class="tl">
+          <span class="tl-mark">4</span>
+          <div>
+            <h3>Results, CSI &amp; Kota Success Power Session</h3>
+            <p class="when">November 2026</p>
+            <p class="body">Check your All-India Rank (AIR), Competitive Success Index (CSI) and scholarship entitlement. Top national rankers receive invitations to the grand Success Power Session (SPS) in Kota.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="part">
+    <div class="wrap">
+      <header class="part-head">
+        <p class="kicker">Quick answers</p>
+        <h2>Questions students ask first</h2>
+      </header>
+      <div class="faq">
+        <details><summary>Is there negative marking?</summary><p>Classes 5, 6 and 7 have none, so attempt every question. In Classes 8, 9 and 10 a correct answer earns 4 marks and a wrong answer costs 1 mark.</p></details>
+        <details><summary>How long is the paper?</summary><p>It runs 2 hours (120 minutes) with 80 multiple-choice questions and a maximum of 320 marks.</p></details>
+        <details><summary>Offline or online?</summary><p>The offline pen-and-paper test is on 25 October 2026 across 400+ cities. Online CBT from home is available on 25, 28 and 31 October.</p></details>
+        <details><summary>Which syllabus is tested?</summary><p>Foundational NCERT concepts from your current class and earlier topics. Part 3 lists the Class 8 and Class 9 topics. For other classes, check the official syllabus on allen.in/tallentex.</p></details>
+        <details><summary>Should I guess when I am unsure?</summary><p>With four options and a 1-mark penalty, a blind guess averages about +0.25 marks, so the break-even chance is 20%. The results swing a lot, though. Guess after you have ruled out at least one option, and use the guess calculator in Part 2 to see the numbers.</p></details>
+        <details><summary>What happens after the exam?</summary><p>Results arrive in November 2026 with your All-India Rank, CSI and scholarship entitlement. Top national rankers are invited to the Success Power Session in Kota.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p><strong>TALLENTEX 2027 Interactive Prep &amp; Scholarship Portal.</strong> Designed for Class 5 to 10 aspirants. This is an unofficial study aid, so confirm dates, fees, scholarship slabs and syllabus on allen.in/tallentex.</p>
+    <p>© 2026 All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Helpers ---------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var cssVar=function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()};
+var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+var reduceMotion=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var store={
+  get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+};
+
+/* ---------- Data ---------- */
+var SUBJ={
+  physics:{label:'Physics',short:'Physics',v:'--c-physics'},
+  chemistry:{label:'Chemistry',short:'Chemistry',v:'--c-chemistry'},
+  biology:{label:'Biology',short:'Biology',v:'--c-biology'},
+  maths:{label:'Mathematics',short:'Maths',v:'--c-maths'},
+  iq:{label:'Mental Ability (IQ)',short:'IQ',v:'--c-iq'}
+};
+var ORDER=['physics','chemistry','biology','maths','iq'];
+
+var patternData={
+  junior:{
+    marking:'<strong>+4 marks</strong> for correct · <strong>no negative marking</strong>',
+    insight:'Since there is no negative marking in Classes 5–7, attempt every single question to maximise your marks.',
+    subjects:[
+      {key:'physics',name:'Physics',count:11,marks:44,pct:'13.8%'},
+      {key:'chemistry',name:'Chemistry',count:11,marks:44,pct:'13.8%'},
+      {key:'biology',name:'Biology',count:11,marks:44,pct:'13.8%'},
+      {key:'maths',name:'Mathematics',count:25,marks:100,pct:'31.2%'},
+      {key:'iq',name:'Mental Ability (IQ)',count:22,marks:88,pct:'27.4%'}
+    ]
+  },
+  senior:{
+    marking:'<strong>+4 marks</strong> for correct · <strong>−1 mark</strong> for wrong',
+    insight:'Negative marking applies (−1 per wrong answer). Avoid blind guesses, prioritise accurate attempts, and guess only after you have ruled out an option.',
+    subjects:[
+      {key:'physics',name:'Physics',count:15,marks:60,pct:'18.75%'},
+      {key:'chemistry',name:'Chemistry',count:15,marks:60,pct:'18.75%'},
+      {key:'biology',name:'Biology',count:15,marks:60,pct:'18.75%'},
+      {key:'maths',name:'Mathematics',count:15,marks:60,pct:'18.75%'},
+      {key:'iq',name:'Mental Ability (IQ)',count:20,marks:80,pct:'25.00%'}
+    ]
+  }
+};
+
+var syllabusData={
+  8:[
+    {subject:'physics',title:'Force & Pressure',desc:'Types of forces, contact/non-contact, atmospheric pressure, liquid pressure dynamics.'},
+    {subject:'physics',title:'Friction & Sound',desc:'Factors affecting friction, fluid friction, sound propagation, frequency, amplitude, loudness.'},
+    {subject:'physics',title:'Chemical & Magnetic Effects of Current',desc:'Electroplating, conductors/insulators, magnetic effect around wire, electromagnets, solenoids.'},
+    {subject:'physics',title:'Light & Solar System',desc:'Laws of reflection, plane mirrors, human eye anatomy, dispersion of light, celestial bodies.'},
+    {subject:'chemistry',title:'Synthetic Fibres & Plastics',desc:'Polymers, nylon, polyester, acrylic, thermoplastics vs thermosetting plastics.'},
+    {subject:'chemistry',title:'Metals & Non-Metals',desc:'Physical/chemical properties, reactivity series, displacement reactions, uses.'},
+    {subject:'chemistry',title:'Coal & Petroleum',desc:'Fossil fuels, refining of petroleum, natural gas, exhaustible resources.'},
+    {subject:'chemistry',title:'Combustion & Flame',desc:'Ignition temperature, types of combustion, zones of candle flame, calorific value.'},
+    {subject:'biology',title:'Crop Production & Microorganisms',desc:'Agricultural practices, irrigation, friendly & harmful microbes, food preservation.'},
+    {subject:'biology',title:'Cell Structure & Functions',desc:'Cell membrane, cytoplasm, organelles, plant vs animal cell comparison.'},
+    {subject:'biology',title:'Reproduction & Adolescence',desc:'Sexual/asexual reproduction, endocrine glands, hormones, physical changes during puberty.'},
+    {subject:'maths',title:'Rational Numbers & Equations',desc:'Properties of rational numbers, solving linear equations in one variable.'},
+    {subject:'maths',title:'Squares, Cubes & Roots',desc:'Square roots by prime factorisation & division method, cube root properties.'},
+    {subject:'maths',title:'Quadrilaterals & Mensuration',desc:'Polygons, area of trapezium/rhombus, surface area & volume of cube/cuboid/cylinder.'},
+    {subject:'maths',title:'Exponents & Factorisation',desc:'Laws of exponents, algebraic identities, factorising expressions.'},
+    {subject:'iq',title:'Number & Alpha Series',desc:'Identifying logical patterns, missing numbers, letter series sequences.'},
+    {subject:'iq',title:'Coding-Decoding & Direction',desc:'Substitutional coding, compass directions, shortest distance calculations.'},
+    {subject:'iq',title:'Puzzles & Non-Verbal IQ',desc:'Blood relations, seating arrangements, mirror images, cube folding & figure matrix.'}
+  ],
+  9:[
+    {subject:'physics',title:'Motion & Laws of Motion',desc:"Distance vs displacement, velocity-time graphs, Newton's 3 laws of motion, momentum."},
+    {subject:'physics',title:'Gravitation & Work-Energy',desc:'Universal law of gravitation, acceleration due to gravity (g), kinetic & potential energy.'},
+    {subject:'physics',title:'Sound Waves',desc:'Wave properties, speed of sound, reflection of sound, echo, ultrasound applications.'},
+    {subject:'chemistry',title:'Matter in Our Surroundings',desc:'States of matter, latent heat of fusion/vaporisation, evaporation factors, sublimation.'},
+    {subject:'chemistry',title:'Is Matter Around Us Pure?',desc:'Elements, compounds, mixtures, solutions, suspensions, colloids, separation techniques.'},
+    {subject:'chemistry',title:'Atoms & Molecules',desc:'Laws of chemical combination, mole concept, chemical formula writing, atomic mass.'},
+    {subject:'biology',title:'The Fundamental Unit of Life',desc:'Plasma membrane, nucleus, ER, Golgi apparatus, mitochondria, lysosomes, plastids.'},
+    {subject:'biology',title:'Tissues & Diversity',desc:'Meristematic & permanent plant tissues, epithelial/connective/muscular animal tissues.'},
+    {subject:'maths',title:'Number Systems & Polynomials',desc:'Irrational numbers, rationalisation, zeroes of polynomials, algebraic identities.'},
+    {subject:'maths',title:'Coordinate Geometry & Lines/Angles',desc:'Cartesian plane, quadrants, parallel lines & transversal angle theorems.'},
+    {subject:'maths',title:"Triangles & Heron's Formula",desc:"Congruence criteria (SAS, ASA, SSS, RHS), calculating triangle area via Heron's rule."},
+    {subject:'iq',title:'Advanced Series & Syllogisms',desc:'Complex number patterns, Venn diagrams, logical deduction, statement & conclusions.'},
+    {subject:'iq',title:'Analytical & Non-Verbal Reasoning',desc:'Cube cutting/folding, dice reasoning, embedded figures, matrix completion.'}
+  ]
+};
+
+var SLOTS=[
+  {label:'25 Oct 2026',date:[2026,9,25],iso:'2026-10-25T00:00:00+05:30',meta:'Offline pen-and-paper (400+ cities) and online CBT slot 1',offline:true},
+  {label:'28 Oct 2026',date:[2026,9,28],iso:'2026-10-28T00:00:00+05:30',meta:'Online CBT slot 2, taken from home',offline:false},
+  {label:'31 Oct 2026',date:[2026,9,31],iso:'2026-10-31T00:00:00+05:30',meta:'Online CBT slot 3, taken from home',offline:false}
+];
+var TIERS=[
+  {w:40,label:'10–20%',sch:'10% - 20% Waiver',csi:'Standard Performance Tier'},
+  {w:15,label:'25–40%',sch:'25% - 40% Waiver',csi:'Top 30% Competitive Rank'},
+  {w:15,label:'50–60%',sch:'50% - 60% Waiver',csi:'Top 15% National Rank'},
+  {w:15,label:'75–80%',sch:'75% - 80% Waiver',csi:'Top 5% National Pool'},
+  {w:15,label:'90%',sch:'90% Scholarship',csi:'Top 1% National AIR (Tier 1)'}
+];
+function tierIndex(pct){return pct>=85?4:pct>=70?3:pct>=55?2:pct>=40?1:0}
+
+/* ---------- State ---------- */
+var state={group:'senior',simGroup:'senior',slot:0,cls:8,subj:'all',q:'',hours:3,elim:0};
+var revised=new Set();
+try{var saved=JSON.parse(store.get('tx27-revised')||'[]');if(Array.isArray(saved))saved.forEach(function(k){revised.add(k)})}catch(e){}
+var topicKey=function(cls,t){return cls+':'+t.title};
+
+function bindSeg(el,fn){
+  el.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-value]');
+    if(!b||!el.contains(b))return;
+    fn(b.getAttribute('data-value'));
+  });
+}
+function pressSeg(el,val){
+  $$('button[data-value]',el).forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-value')===String(val)))});
+}
+
+/* ---------- Theme ---------- */
+var root=document.documentElement;
+var darkMQ=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+function effectiveTheme(){
+  var a=root.getAttribute('data-theme');
+  if(a==='dark'||a==='light')return a;
+  return darkMQ&&darkMQ.matches?'dark':'light';
+}
+function themeChanged(){
+  refreshChartTheme();
+  document.dispatchEvent(new Event('themechange'));
+}
+(function(){
+  var t=store.get('tx27-theme');
+  if(t==='dark'||t==='light')root.setAttribute('data-theme',t);
+})();
+$('#themeBtn').addEventListener('click',function(){
+  var next=effectiveTheme()==='dark'?'light':'dark';
+  root.setAttribute('data-theme',next);
+  store.set('tx27-theme',next);
+  themeChanged();
+});
+if(darkMQ){
+  var onMQ=function(){if(!root.getAttribute('data-theme'))themeChanged()};
+  if(darkMQ.addEventListener)darkMQ.addEventListener('change',onMQ);else if(darkMQ.addListener)darkMQ.addListener(onMQ);
+}
+
+/* ---------- Header: menu, scroll progress, scroll spy ---------- */
+var navEl=$('#nav'),menuBtn=$('#menuBtn');
+menuBtn.addEventListener('click',function(){
+  var open=navEl.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded',String(open));
+});
+navEl.addEventListener('click',function(e){
+  if(e.target.closest('a')){navEl.classList.remove('open');menuBtn.setAttribute('aria-expanded','false')}
+});
+var progressBar=$('#progressBar'),ticking=false;
+function onScroll(){
+  if(ticking)return;ticking=true;
+  requestAnimationFrame(function(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    progressBar.style.transform='scaleX('+(h>0?clamp(window.scrollY/h,0,1):0)+')';
+    ticking=false;
+  });
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+if('IntersectionObserver' in window){
+  var links=$$('.nav a');
+  var spy=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+en.target.id)});
+      }
+    });
+  },{rootMargin:'-40% 0px -55% 0px'});
+  $$('main section[id]').forEach(function(s){spy.observe(s)});
+}
+
+/* ---------- Count-up on KPIs ---------- */
+$$('[data-count]').forEach(function(el){
+  if(reduceMotion)return;
+  var target=parseFloat(el.getAttribute('data-count')),dec=parseInt(el.getAttribute('data-dec')||'0',10),t0=null;
+  el.textContent=(0).toFixed(dec);
+  function step(ts){
+    if(t0===null)t0=ts;
+    var p=clamp((ts-t0)/900,0,1),e=1-Math.pow(1-p,3);
+    el.textContent=(target*e).toFixed(dec);
+    if(p<1)requestAnimationFrame(step);else el.textContent=target.toFixed(dec);
+  }
+  requestAnimationFrame(step);
+  setTimeout(function(){el.textContent=target.toFixed(dec)},1600);
+});
+
+/* ---------- Hero background: drifting OMR bubbles ---------- */
+(function(){
+  var cvs=$('#heroCanvas');if(!cvs||!cvs.getContext)return;
+  var host=cvs.parentElement,ctx=cvs.getContext('2d'),W=0,H=0,bubbles=[],colors={};
+  function readColors(){colors={ring:cssVar('--line-strong'),fill:cssVar('--accent')}}
+  function seed(){
+    var n=Math.round(W*H/24000);
+    bubbles=[];
+    for(var i=0;i<n;i++)bubbles.push({x:Math.random()*W,y:Math.random()*H,r:5+Math.random()*9,v:.1+Math.random()*.22,f:Math.random()<.15});
+  }
+  function resize(){
+    var r=host.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+    W=r.width;H=r.height;cvs.width=Math.round(W*dpr);cvs.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);seed();draw();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);ctx.globalAlpha=.6;
+    for(var i=0;i<bubbles.length;i++){
+      var b=bubbles[i];ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+      if(b.f){ctx.fillStyle=colors.fill;ctx.fill()}else{ctx.strokeStyle=colors.ring;ctx.lineWidth=1.5;ctx.stroke()}
+    }
+    ctx.globalAlpha=1;
+  }
+  function tick(){
+    if(!document.hidden){
+      for(var i=0;i<bubbles.length;i++){var b=bubbles[i];b.y-=b.v;if(b.y<-b.r){b.y=H+b.r;b.x=Math.random()*W}}
+      draw();
+    }
+    requestAnimationFrame(tick);
+  }
+  readColors();resize();
+  window.addEventListener('resize',function(){resize()});
+  document.addEventListener('themechange',function(){readColors();draw()});
+  if(!reduceMotion)requestAnimationFrame(tick);
+})();
+
+/* ---------- Dates & countdown ---------- */
+function today0(){var t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())}
+function slotDate(i){var d=SLOTS[i].date;return new Date(d[0],d[1],d[2])}
+function dayDiff(a,b){return Math.round((b-a)/86400000)}
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)}
+function fmt(d,o){return d.toLocaleDateString('en-GB',o||{day:'numeric',month:'short'})}
+var pad=function(n){return String(n).padStart(2,'0')};
+
+function tickCountdown(){
+  var diff=new Date(SLOTS[state.slot].iso).getTime()-Date.now(),over=diff<=0;
+  if(over)diff=0;
+  var s=Math.floor(diff/1000);
+  $('#cdD').textContent=pad(Math.floor(s/86400));
+  $('#cdH').textContent=pad(Math.floor(s%86400/3600));
+  $('#cdM').textContent=pad(Math.floor(s%3600/60));
+  $('#cdS').textContent=pad(s%60);
+  $('#cdNote').textContent=over?'This slot has started or passed. Choose another slot or check allen.in/tallentex.':'to exam day · 80 MCQs · 120 minutes · max 320 marks';
+}
+setInterval(tickCountdown,1000);
+
+function setSlot(v){
+  state.slot=parseInt(v,10);
+  $$('.slot-seg').forEach(function(s){pressSeg(s,state.slot)});
+  $('#slotMeta').textContent=SLOTS[state.slot].meta;
+  tickCountdown();renderPlan();renderTimeline();
+}
+$$('.slot-seg').forEach(function(s){bindSeg(s,setSlot)});
+
+/* ---------- Charts ---------- */
+var patternChart=null,simChart=null,hasChart=typeof Chart!=='undefined';
+function palette(){
+  return {
+    ink:cssVar('--ink'),soft:cssVar('--ink-soft'),line:cssVar('--line'),surface:cssVar('--surface'),
+    good:cssVar('--good'),bad:cssVar('--bad'),blue:cssVar('--blue'),
+    subj:ORDER.map(function(k){return cssVar(SUBJ[k].v)})
+  };
+}
+if(hasChart){
+  Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+  if(reduceMotion)Chart.defaults.animation=false;
+}
+function initPatternChart(){
+  var box=$('#patternChart').parentElement;
+  if(!hasChart){box.innerHTML='<p class="small">The chart library could not load. The table beside it lists the same numbers.</p>';return}
+  var c=palette(),d=patternData[state.group].subjects;
+  patternChart=new Chart($('#patternChart'),{
+    type:'doughnut',
+    data:{labels:d.map(function(s){return s.name}),datasets:[{data:d.map(function(s){return s.count}),backgroundColor:c.subj,borderColor:c.surface,borderWidth:3,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(x){return ' '+x.label+': '+x.raw+' questions ('+(x.raw*4)+' marks)'}}}}},
+    plugins:[{id:'centerText',afterDraw:function(ch){
+      var a=ch.chartArea,ctx=ch.ctx,p=palette(),x=(a.left+a.right)/2,y=(a.top+a.bottom)/2;
+      ctx.save();ctx.textAlign='center';ctx.textBaseline='alphabetic';
+      ctx.fillStyle=p.ink;ctx.font='500 34px "IBM Plex Mono", monospace';ctx.fillText('80',x,y+4);
+      ctx.fillStyle=p.soft;ctx.font='500 11px "IBM Plex Mono", monospace';ctx.fillText('QUESTIONS',x,y+24);
+      ctx.restore();
+    }}]
+  });
+}
+function initSimChart(){
+  var box=$('#simChart').parentElement;
+  if(!hasChart){box.innerHTML='<p class="small">The chart library could not load. The numbers above still update.</p>';return}
+  var c=palette();
+  simChart=new Chart($('#simChart'),{
+    type:'bar',
+    data:{labels:['Your plan','Random guessing'],datasets:[
+      {label:'Marks gained',data:[0,0],backgroundColor:c.good,borderRadius:4},
+      {label:'Marks lost',data:[0,0],backgroundColor:c.bad,borderRadius:4},
+      {label:'Net score',data:[0,0],backgroundColor:c.blue,borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:c.soft,boxWidth:10,boxHeight:10,padding:14}}},
+      scales:{x:{ticks:{color:c.soft},grid:{display:false},border:{color:c.line}},y:{ticks:{color:c.soft},grid:{color:c.line},border:{display:false}}}}
+  });
+}
+function refreshChartTheme(){
+  var c=palette();
+  if(patternChart){
+    patternChart.data.datasets[0].backgroundColor=c.subj;
+    patternChart.data.datasets[0].borderColor=c.surface;
+    patternChart.update('none');
+  }
+  if(simChart){
+    var ds=simChart.data.datasets;ds[0].backgroundColor=c.good;ds[1].backgroundColor=c.bad;ds[2].backgroundColor=c.blue;
+    simChart.options.plugins.legend.labels.color=c.soft;
+    simChart.options.scales.x.ticks.color=c.soft;simChart.options.scales.x.border.color=c.line;
+    simChart.options.scales.y.ticks.color=c.soft;simChart.options.scales.y.grid.color=c.line;
+    simChart.update('none');
+  }
+}
+
+/* ---------- Part 1: Pattern ---------- */
+function renderPattern(){
+  var g=patternData[state.group];
+  pressSeg($('#groupSeg'),state.group);
+  var badge=$('#markingBadge');
+  badge.innerHTML='Marking scheme: '+g.marking;
+  badge.classList.toggle('warn',state.group==='senior');
+  $('#patternInsight').textContent=g.insight;
+  $('#patternBody').innerHTML=g.subjects.map(function(s){
+    var w=s.count/80*100,mins=s.count*1.5;
+    return '<tr><td class="sub"><span class="dot" style="background:var('+SUBJ[s.key].v+')"></span>'+esc(s.name)+'</td>'+
+      '<td class="r"><strong>'+s.count+'</strong></td><td class="r">'+s.marks+'</td>'+
+      '<td class="r">'+s.pct+'<span class="wbar"><i style="width:'+w.toFixed(1)+'%;background:var('+SUBJ[s.key].v+')"></i></span></td>'+
+      '<td class="r">'+(mins%1?mins.toFixed(1):mins)+' min</td></tr>';
+  }).join('');
+  if(patternChart){
+    patternChart.data.labels=g.subjects.map(function(s){return s.name});
+    patternChart.data.datasets[0].data=g.subjects.map(function(s){return s.count});
+    patternChart.update();
+  }
+}
+bindSeg($('#groupSeg'),function(v){state.group=v;renderPattern()});
+
+/* ---------- Part 2: Simulator ---------- */
+(function buildLadder(){
+  $('#ladder').innerHTML=TIERS.map(function(t){return '<i style="flex:'+t.w+' 1 0"></i>'}).join('');
+  $('#ladderLabels').innerHTML=TIERS.map(function(t){return '<span style="flex:'+t.w+' 1 0">'+t.label+'</span>'}).join('');
+})();
+
+function updateSim(){
+  var pen=state.simGroup==='senior'?1:0;
+  var att=parseInt($('#rangeAttempted').value,10),acc=parseInt($('#rangeAccuracy').value,10);
+  $('#lblAttempted').textContent=att+' / 80';
+  $('#lblAccuracy').textContent=acc+'%';
+  var correct=Math.round(att*acc/100),wrong=att-correct,skipped=80-att;
+  var gained=correct*4,lost=wrong*pen,net=Math.max(0,gained-lost);
+  $('#simCorrect').textContent=correct;
+  $('#simIncorrect').textContent=wrong;
+  $('#simUnattempted').textContent=skipped;
+  $('#lblWrong').textContent='Incorrect ('+(pen?'−1':'0')+')';
+  $('#simNet').textContent=net;
+
+  var gc=Math.round(att*0.25),gw=att-gc,ggained=gc*4,glost=gw*pen,gnet=Math.max(0,ggained-glost);
+  if(simChart){
+    simChart.data.datasets[0].data=[gained,ggained];
+    simChart.data.datasets[1].data=[-lost,-glost];
+    simChart.data.datasets[2].data=[net,gnet];
+    simChart.update();
+  }
+
+  var pct=net/320*100,ti=tierIndex(pct);
+  $$('#ladder i').forEach(function(el,i){el.classList.toggle('on',i===ti)});
+  var m=$('#marker');m.style.left=clamp(pct,3,97)+'%';
+  $('#markerLbl').textContent=net;
+  $('#estSch').textContent=TIERS[ti].sch;
+  $('#estCSI').textContent=TIERS[ti].csi;
+  updateTarget();
+}
+function updateGuess(){
+  var pen=state.simGroup==='senior'?1:0,k=state.elim,p=1/(4-k),ev=4*p-(1-p)*pen;
+  pressSeg($('#elimChips'),k);
+  $('#gP').textContent=Math.round(p*100)+'%';
+  $('#gEV').textContent=(ev>=0?'+':'')+ev.toFixed(2);
+  $('#gBE').textContent=Math.round(pen/(4+pen)*100)+'%';
+  var v;
+  if(!pen)v='There is no penalty in this class group, so answer every question.';
+  else if(k===0)v='Roughly break-even. A blind guess gains a little on average but results swing widely. Skip it unless you are short on time.';
+  else if(k===3)v='Only one option is left, so take it.';
+  else v='Guess. With '+k+' option'+(k>1?'s':'')+' ruled out, each guess is worth the risk on average.';
+  $('#gVerdict').textContent=v;
+}
+function updateTarget(){
+  var pen=state.simGroup==='senior'?1:0,T=parseInt($('#rangeTarget').value,10);
+  $('#lblTarget').textContent=T+' / 320';
+  $('#targetRows').innerHTML=[60,70,80].map(function(N){
+    var need=Math.ceil((T+N*pen)/(4+pen));
+    if(need>N)return '<div class="trow out"><span>Attempt '+N+'</span><b>Out of reach</b></div>';
+    var a=Math.round(need/N*100);
+    return '<div class="trow"><span>Attempt '+N+'</span><b>'+need+' correct · '+a+'%</b><span class="bar-track"><i style="width:'+a+'%"></i></span></div>';
+  }).join('');
+}
+$('#rangeAttempted').addEventListener('input',updateSim);
+$('#rangeAccuracy').addEventListener('input',updateSim);
+$('#rangeTarget').addEventListener('input',updateTarget);
+bindSeg($('#simSeg'),function(v){state.simGroup=v;pressSeg($('#simSeg'),v);updateSim();updateGuess()});
+bindSeg($('#elimChips'),function(v){state.elim=parseInt(v,10);updateGuess()});
+
+/* ---------- Part 3: Syllabus ---------- */
+function renderSubjChips(){
+  var items=syllabusData[state.cls],counts={all:items.length};
+  items.forEach(function(t){counts[t.subject]=(counts[t.subject]||0)+1});
+  var keys=['all'].concat(ORDER.filter(function(k){return counts[k]}));
+  $('#subjChips').innerHTML=keys.map(function(k){
+    var label=k==='all'?'All subjects':SUBJ[k].short;
+    return '<button type="button" data-value="'+k+'" aria-pressed="'+(state.subj===k)+'">'+label+' <span class="mono-sm" style="color:inherit;opacity:.7">'+counts[k]+'</span></button>';
+  }).join('');
+}
+function renderProgress(){
+  var items=syllabusData[state.cls],done=items.filter(function(t){return revised.has(topicKey(state.cls,t))}).length;
+  $('#sylProgText').textContent=done+' of '+items.length+' topics revised';
+  $('#sylProgBar').style.width=(items.length?done/items.length*100:0)+'%';
+}
+function renderSyllabus(){
+  var items=syllabusData[state.cls],q=state.q.trim().toLowerCase();
+  var list=items.filter(function(t){
+    if(state.subj!=='all'&&t.subject!==state.subj)return false;
+    if(q&&(t.title+' '+t.desc).toLowerCase().indexOf(q)===-1)return false;
+    return true;
+  });
+  var grid=$('#syllabusGrid');
+  if(!list.length){grid.innerHTML='<p class="empty">No topics match your search.</p>';renderProgress();return}
+  grid.innerHTML=list.map(function(t){
+    var k=topicKey(state.cls,t),done=revised.has(k);
+    return '<article class="topic'+(done?' is-done':'')+'">'+
+      '<div class="topic-top"><span class="subj"><i style="background:var('+SUBJ[t.subject].v+')"></i>'+SUBJ[t.subject].short+'</span><span class="mono-sm">Class '+state.cls+' NCERT</span></div>'+
+      '<h4>'+esc(t.title)+'</h4><p>'+esc(t.desc)+'</p>'+
+      '<label class="rev"><input type="checkbox" data-key="'+esc(k)+'"'+(done?' checked':'')+'><span>'+(done?'Revised':'Mark as revised')+'</span></label></article>';
+  }).join('');
+  renderProgress();
+}
+$('#syllabusGrid').addEventListener('change',function(e){
+  var cb=e.target.closest('input[data-key]');if(!cb)return;
+  var k=cb.getAttribute('data-key');
+  if(cb.checked)revised.add(k);else revised.delete(k);
+  store.set('tx27-revised',JSON.stringify(Array.from(revised)));
+  var card=cb.closest('.topic');card.classList.toggle('is-done',cb.checked);
+  cb.nextElementSibling.textContent=cb.checked?'Revised':'Mark as revised';
+  renderProgress();renderPlan();
+});
+$('#subjChips').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-value]');if(!b)return;
+  state.subj=b.getAttribute('data-value');renderSubjChips();renderSyllabus();
+});
+$('#topicSearch').addEventListener('input',function(e){state.q=e.target.value;renderSyllabus()});
+function setClass(v){
+  state.cls=parseInt(v,10);state.subj='all';
+  $$('.cls-seg').forEach(function(s){pressSeg(s,state.cls)});
+  renderSubjChips();renderSyllabus();renderPlan();
+}
+$$('.cls-seg').forEach(function(s){bindSeg(s,setClass)});
+
+/* ---------- Part 4: Planner ---------- */
+function interleave(topics){
+  var buckets={};ORDER.forEach(function(k){buckets[k]=[]});
+  topics.forEach(function(t){buckets[t.subject].push(t)});
+  var out=[],more=true;
+  while(more){more=false;ORDER.forEach(function(k){if(buckets[k].length){out.push(buckets[k].shift());more=true}})}
+  return out;
+}
+var lastPlanText='';
+function renderPlan(){
+  var slot=SLOTS[state.slot],exam=slotDate(state.slot),base=today0(),daysLeft=dayDiff(base,exam);
+  var pending=interleave(syllabusData[state.cls].filter(function(t){return !revised.has(topicKey(state.cls,t))}));
+  var n=pending.length,stats=$('#planStats'),list=$('#planList'),dayOpts={weekday:'short',day:'numeric',month:'short'};
+  var hours=state.hours;
+  $('#lblHours').textContent=hours+' h';
+
+  if(daysLeft<=0){
+    stats.innerHTML='<div><dt>Days left</dt><dd>0</dd></div><div><dt>Topics left</dt><dd>'+n+'</dd></div>';
+    list.innerHTML='<p class="plan-empty">The '+esc(slot.label)+' slot has started or passed. Pick a later slot above, or check allen.in/tallentex for the next date.</p>';
+    lastPlanText='';return;
+  }
+  var studyDays=daysLeft>=3?daysLeft-1:daysLeft;
+  var perDay=n?Math.ceil(n/studyDays):0;
+  var mins=perDay?Math.floor((hours*60-30)/perDay):0;
+  stats.innerHTML=
+    '<div><dt>Days left</dt><dd>'+daysLeft+'</dd></div>'+
+    '<div><dt>Topics left</dt><dd>'+n+'</dd></div>'+
+    '<div><dt>Topics a day</dt><dd>'+(perDay||'–')+'</dd></div>'+
+    '<div><dt>Per topic</dt><dd>'+(perDay?'~'+mins+' min':'–')+'</dd></div>';
+
+  var base_n=n?Math.floor(n/studyDays):0,extra=n?n%studyDays:0,cursor=0,rows=[],text=[];
+  text.push('TALLENTEX 2027 study plan · Class '+state.cls+' · exam on '+slot.label);
+  text.push(daysLeft+' days left · '+hours+' h a day · '+n+' topics to revise');text.push('');
+  for(var i=0;i<studyDays;i++){
+    var cnt=base_n+(i<extra?1:0),day=pending.slice(cursor,cursor+cnt);cursor+=cnt;
+    var d=addDays(base,i),per=cnt?Math.floor((hours*60-30)/cnt):0,label=fmt(d,dayOpts);
+    var note='30 min Mental Ability drill'+(cnt?' · about '+per+' min per topic':' · timed practice papers');
+    if(cnt&&per<20)note+=' · tight, try more study time';
+    rows.push('<div class="day"><div class="day-date"><b>'+esc(label.split(' ')[0].replace(',',''))+'</b>'+esc(label.replace(/^[A-Za-z]+,?\s*/,''))+(i===0?'<span class="tag">Today</span>':'')+'</div><div>'+
+      (cnt?'<ul class="topics">'+day.map(function(t){return '<li><i style="background:var('+SUBJ[t.subject].v+')"></i>'+esc(t.title)+'</li>'}).join('')+'</ul>':'')+
+      '<p class="small">'+esc(note)+'</p></div></div>');
+    text.push(label+': '+(cnt?day.map(function(t){return t.title}).join('; '):'revision and timed practice')+' | '+note);
+  }
+  if(daysLeft>=3){
+    var ev=addDays(base,daysLeft-1),evl=fmt(ev,dayOpts),evNote='One timed mock paper, review every wrong answer, then sleep early.';
+    rows.push('<div class="day"><div class="day-date"><b>'+esc(evl.split(' ')[0].replace(',',''))+'</b>'+esc(evl.replace(/^[A-Za-z]+,?\s*/,''))+'<span class="tag alt">Exam eve</span></div><div><p class="small">'+evNote+'</p></div></div>');
+    text.push(evl+' (exam eve): '+evNote);
+  }
+  var xl=fmt(exam,dayOpts),xNote=state.cls>=8?'Aim for about 1.5 minutes per question. A wrong answer costs 1 mark, so guess only after ruling out an option.':'Aim for about 1.5 minutes per question.';
+  rows.push('<div class="day"><div class="day-date"><b>'+esc(xl.split(' ')[0].replace(',',''))+'</b>'+esc(xl.replace(/^[A-Za-z]+,?\s*/,''))+'<span class="tag">Exam day</span></div><div><p class="small">'+xNote+'</p></div></div>');
+  text.push(xl+' (exam day): '+xNote);
+  list.innerHTML=rows.join('');
+  lastPlanText=text.join('\n');
+}
+$('#rangeHours').addEventListener('input',function(e){state.hours=parseFloat(e.target.value);renderPlan()});
+$('#copyPlan').addEventListener('click',function(){
+  var msg=$('#copyMsg');
+  if(!lastPlanText){msg.textContent='There is no plan to copy for this slot.';return}
+  function fallback(){
+    var ta=document.createElement('textarea');ta.value=lastPlanText;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    var ok=false;try{ok=document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+    msg.textContent=ok?'Plan copied.':'Copy was blocked. Select the plan text and copy it by hand.';
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(lastPlanText).then(function(){msg.textContent='Plan copied.'},fallback);
+  }else fallback();
+});
+
+/* ---------- Part 5: Timeline ---------- */
+function statusChip(label,deadline,base){
+  var d=dayDiff(base,deadline),txt=label+' · '+fmt(deadline),cls='';
+  if(d<0){txt+=' · closed';cls=' bad'}
+  else if(d===0){txt+=' · closes today';cls=' warn'}
+  else if(d<=3){txt+=' · '+d+' day'+(d>1?'s':'')+' left';cls=' warn'}
+  else txt+=' · '+d+' days left';
+  return '<span class="stat'+cls+'">'+esc(txt)+'</span>';
+}
+function renderTimeline(){
+  var base=today0(),exam=slotDate(state.slot),slot=SLOTS[state.slot],out='';
+  out+=slot.offline?statusChip('Offline registration',addDays(exam,-10),base):'<span class="stat mute">Offline test is held on 25 Oct only</span>';
+  out+=statusChip('Online CBT registration',addDays(exam,-4),base);
+  $('#regStatus').innerHTML=out;
+  var left=dayDiff(base,exam),note;
+  if(left<=0)note='The '+slot.label+' slot has started or passed.';
+  else if(left<30)note=left+' days to go, so you are inside the 30–45 day window. Use the study plan in Part 4 to compress it.';
+  else note=left+' days to go, so you are on schedule.';
+  $('#prepNote').textContent=note;
+}
+
+/* ---------- Init ---------- */
+initPatternChart();
+initSimChart();
+renderPattern();
+updateSim();
+updateGuess();
+renderSubjChips();
+renderSyllabus();
+setSlot(0);
+setClass(8);
+})();
+</script>
+</body>
+</html>
